@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,44 +13,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Admin;
-import model.Model;
+import model.RawSample;
+import model.VideoSample;
 import util.DBUtil;
+
 /**
  *
  * @author namv2
  */
-public class AdminDAO {
+public class RawSampleDAO {
     private Connection conn;
 
-    public AdminDAO() {
+    public RawSampleDAO() {
         this.conn = DBUtil.getConnection();
     }
     
-    public Admin getAdminById(int id){
+    public RawSample getRawSampleById(int id){
         String sql = """
-                     SELECT * FROM tblAdmin t
+                     SELECT * FROM tblRawSample t
                      WHERE t.id = ?
                      """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            Admin admin = new Admin();
-            
-            
+            RawSample rawSample = new RawSample();
+
             while (rs.next()) {
-                admin.setId(rs.getInt("id"));
-                admin.setUsername(rs.getString("username"));
-                admin.setPassword(rs.getString("password"));
-                admin.setFullName(rs.getString("fullName"));
-                admin.setPhoneNumber(rs.getString("phoneNumber"));
-                admin.setEmail(rs.getString("email"));
+                rawSample.setId(rs.getInt("id"));
+                rawSample.setFileName(rs.getString("fileName"));
+                rawSample.setPath(rs.getString("path"));
+                rawSample.setDuration(rs.getInt("duration"));
+                rawSample.setStatus(rs.getString("status"));
+                rawSample.setUploadAt(rs.getTimestamp("uploadAt").toLocalDateTime());   
+                
+                int tblAdminid = rs.getInt("tblAdminid");
+                AdminDAO adminDAO = new AdminDAO();
+                rawSample.setUploadBy(adminDAO.getAdminById(tblAdminid));
             }
 
-            return admin;
+            return rawSample;
         } catch (SQLException ex) {
-            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }

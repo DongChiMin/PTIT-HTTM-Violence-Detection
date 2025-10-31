@@ -3,7 +3,9 @@
     Created on : Oct 23, 2025, 10:25:47 AM
     Author     : namv2
 --%>
-
+<%@page import="java.util.List"%>
+<%@page import="model.Model"%>
+<%@page import="model.Admin"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -16,6 +18,21 @@
     </head>
 
     <body>
+        <%
+            List<Model> modelList = (List<Model>) request.getAttribute("modelList");
+            Model activeModel = new Model();
+            String activeModelAdmin = "";
+            
+            for (Model m : modelList) {
+                if (m.getIsActive()) {
+                    activeModel = m;
+                    Admin trainedBy = m.getTrainedBy();
+                    activeModelAdmin = trainedBy.getFullName();
+                    break;
+                }
+            }
+            
+        %>
         <header class="header">
             <div class="logo">
                 <h1>AI System</h1>
@@ -39,88 +56,120 @@
                 </nav>
             </aside>
             <main class="content">
-    <h2>Quản lý Model AI</h2>
+                <h2>Quản lý Model AI</h2>
 
-    <!-- Khu vực thông tin model & chức năng -->
-    <div class="model-overview">
-        <!-- Thông tin model đang kích hoạt -->
-        <div class="card model-active">
-            <h3><i class="fas fa-bolt"></i> Model đang kích hoạt: <span class="highlight">Violence Detection v1.1</span></h3>
-            <div class="model-details">
-                <div class="model-stats">
-                    <p><strong>Accuracy:</strong> 92%</p>
-                    <p><strong>Recall (Violence):</strong> 88%</p>
-                    <p><strong>Số lượng mẫu train:</strong> 700</p>
+                <!-- Khu vực thông tin model & chức năng -->
+                <div class="model-overview">
+                    <!-- Thông tin model đang kích hoạt -->
+                    <div class="card model-active">
+                        <% if (activeModel != null) {%>
+                        <h3><i class="fas fa-bolt"></i> Model đang kích hoạt: 
+                            <span class="highlight"><%= activeModel.getName()%></span>
+                        </h3>
+                        <div class="model-details">
+                            <div class="model-stats">
+                                <p><strong>Accuracy:</strong> <%= activeModel.getAccuracy()%></p>
+                                <p><strong>Recall (Violence):</strong> <%= activeModel.getRecallViolence()%></p>
+                                <p><strong>Số lượng mẫu train:</strong> <%= activeModel.getTrainSamples()%></p>
+                            </div>
+                            <div class="model-meta">
+                                <p><strong>Người tạo:</strong> <%= activeModelAdmin%></p>
+                                <p><strong>Thời lượng training:</strong> 
+                                    <%
+                                        // Tính thời lượng training
+                                        java.time.Duration duration = java.time.Duration.between(
+                                                activeModel.getTrainStartTime(), activeModel.getTrainEndTime());
+                                        long hours = duration.toHours();
+                                        long minutes = duration.toMinutesPart();
+                                        long seconds = duration.toSecondsPart();
+                                    %>
+                                    <%= String.format("%02dh%02dm%02ds", hours, minutes, seconds)%>
+                                </p>
+                                <p><strong>Số lượng mẫu test:</strong> <%= activeModel.getTestSamples()%></p>
+                            </div>
+                        </div>
+                    </div>
+                    <% } else { %>
+                    <p>Chưa có model nào đang được kích hoạt.</p>
+                    <% } %>
+
+                    <!-- Tính năng -->
+                    <div class="card model-actions">
+                        <h3><i class="fas fa-tools"></i> Tính năng</h3>
+                        <form action="SelectSamplesServlet" method="get">
+                            <button type="submit" class="btn btn-train-full">
+                                <i class="fas fa-cogs"></i> Huấn luyện model mới
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="model-meta">
-                    <p><strong>Người tạo:</strong> Bùi Ngọc Hiếu</p>
-                    <p><strong>Thời lượng training:</strong> 03h12m23s</p>
-                    <p><strong>Số lượng mẫu test:</strong> 300</p>
+
+                <!-- Danh sách các model -->
+                <div class="card results-table">
+                    <h3><i class="fas fa-list-ul"></i> Danh sách Model đã huấn luyện</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên model</th>
+                                <th>Recall (Violence)</th>
+                                <th>Ngày tạo</th>
+                                <th>Note</th>
+                                <th>Người tạo</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%
+                                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+                                if (modelList != null && !modelList.isEmpty()) {
+                                    for (Model model : modelList) {
+                                        Admin trainedBy = model.getTrainedBy();
+                            %>
+                            <tr>
+                                <td><%= model.getId()%></td>
+                                <td><%= model.getName()%></td>
+                                <td><%= String.format("%.2f", model.getRecallViolence())%></td>
+                                <td>
+                                    <%= model.getTrainStartTime().format(formatter)%>
+                                </td>
+                                <td>
+                                    <%= model.getNote() %>
+                                </td>
+                                <td><%= trainedBy.getFullName()%></td>
+                                <td class="action-buttons">
+                                    <%
+                                        if(!model.getIsActive()){
+                                        %>
+                                        <button class="btn-add btn-activate">
+                                        <i class="fas fa-check-circle"></i> Kích hoạt
+                                    </button>
+                                    <%
+                                        }
+                                    %>
+                                    <button class="btn-edit">
+                                        <i class="fas fa-edit"></i> Retrain
+                                    </button>
+                                    <button class="btn-delete"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa model này?')">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                            <%
+                                }
+                            } else {
+                            %>
+                            <tr>
+                                <td colspan="7" style="text-align:center;">Không có model nào.</td>
+                            </tr>
+                            <%
+                                }
+                            %>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- Tính năng -->
-        <div class="card model-actions">
-            <h3><i class="fas fa-tools"></i> Tính năng</h3>
-            <form action="SelectSamplesServlet" method="get">
-                <button type="submit" class="btn btn-train-full">
-                    <i class="fas fa-cogs"></i> Huấn luyện model mới
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Danh sách các model -->
-    <div class="card results-table">
-        <h3><i class="fas fa-list-ul"></i> Danh sách Model đã huấn luyện</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>id</th>
-                    <th>Tên model</th>
-                    <th>Recall (Violence)</th>
-                    <th>Ngày tạo</th>
-                    <th>Note</th>
-                    <th>Người tạo</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2</td>
-                    <td>Violence Detection v1.1</td>
-                    <td>0.96</td>
-                    <td>23:59:02 05/10/2025</td>
-                    <td><span class="status status-active">Cải thiện mẫu train</span></td>
-                    <td>Trịnh Hoàng Hiệp</td>
-                    <td class="action-buttons">
-                        <button class="btn-add btn-activate"><i class="fas fa-check-circle"></i> Kích hoạt</button>
-                        <button class="btn-edit"><i class="fas fa-edit"></i> Retrain</button>
-                        <button class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa model này?')">
-                            <i class="fas fa-trash-alt"></i> Xóa
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Violence Detection v1.0</td>
-                    <td>0.83</td>
-                    <td>07:45:16 12/05/2025</td>
-                    <td><span class="status status-inactive">—</span></td>
-                    <td>Bùi Ngọc Hiếu</td>
-                    <td class="action-buttons">
-                        <button class="btn-add btn-activate"><i class="fas fa-check-circle"></i> Kích hoạt</button>
-                        <button class="btn-edit"><i class="fas fa-edit"></i> Retrain</button>
-                        <button class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa model này?')">
-                            <i class="fas fa-trash-alt"></i> Xóa
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</main>
+            </main>
 
         </div>
     </body>

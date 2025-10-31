@@ -4,6 +4,11 @@
     Author     : namv2
 --%>
 
+<%@page import="model.Admin"%>
+<%@page import="model.RawSample"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="model.VideoSample"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -13,6 +18,19 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     </head>
     <body>
+        <%
+            List<VideoSample> videoSampleList = (List<VideoSample>) request.getAttribute("videoSampleList");
+            List<VideoSample> violenceSampleList = new ArrayList<>();
+            List<VideoSample> nonViolenceSampleList = new ArrayList<>();
+
+            for (VideoSample vs : videoSampleList) {
+                if (vs.getLabel().equalsIgnoreCase("violence")) {
+                    violenceSampleList.add(vs);
+                } else {
+                    nonViolenceSampleList.add(vs);
+                }
+            }
+        %>
         <header class="header">
             <div class="logo">
                 <h1>AI System</h1>
@@ -36,148 +54,134 @@
                 </nav>
             </aside>
             <main class="content">
-                <h2 style="text-align: center">Huấn luyện model mới</h2>
-                <h3 style="color: var(--primary-color); font-size: 25px">1. Chọn mẫu</h3>
+                <form action="TrainProgressServlet" method="get">
+                    <h2 style="text-align: center">Huấn luyện model mới</h2>
+                    <h3 style="color: var(--primary-color); font-size: 25px">1. Chọn mẫu</h3>
 
-                <div style="display: flex; justify-content: center; gap: 30px;">
-                    <div class="card results-table">
-                        <div style="display: flex; justify-content:space-between;">
-                            <h3><i class="fas fa-list-ul"></i>  Chọn mẫu bạo lực</h3>
-                            <div>
-                                <button class="btn">Chọn tất cả</button>
-                                <button class="btn">Bỏ chọn tất cả</button>
+                    <div style="display: flex; justify-content: center; gap: 30px;">
+                        <div class="card results-table">
+                            <div style="display: flex; justify-content:space-between;">
+                                <h3><i class="fas fa-list-ul"></i>  Chọn mẫu bạo lực</h3>
+                                <div>
+                                    <button class="btn" onclick="toggleCheckboxes('violenceTable', true)">Chọn tất cả</button>
+                                    <button class="btn" onclick="toggleCheckboxes('violenceTable', false)">Bỏ chọn tất cả</button>
+                                </div>
                             </div>
+                            <table id="violenceTable">
+                                <thead>
+                                    <tr>
+                                        <th><strong> id</strong></th>
+                                        <th><strong> Tên file</strong></th>
+                                        <th>Video gốc</th>
+                                        <th>Người upload</th>
+                                        <th>Chọn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%
+                                        for (VideoSample vs : violenceSampleList) {
+                                            RawSample rawSample = vs.getRawSample();
+                                            Admin admin = rawSample.getUploadBy();
+                                    %>
+                                    <tr>
+                                        <td><%= vs.getId()%></td>
+                                        <td><%= vs.getFileName()%></td>
+                                        <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
+                                        <td><%= admin.getFullName()%></td>
+                                        <td>
+                                            <input type="checkbox" name="violenceSamples" value="<%= vs.getId()%>">
+                                        </td>
+                                    </tr>
+                                    <%
+                                        }
+                                    %>
+                                </tbody>
+                            </table>
                         </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th><strong> Tên file</strong></th>
-                                    <th>Thời lượng</th>
-                                    <th>Ngày upload</th>
-                                    <th>Người upload</th>
-                                    <th>Chọn</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>vio1.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:00:23 12/09/2025</td>
-                                    <td>Bùi Ngọc Hiếu</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
 
-                                <tr>
-                                    <td>vio3.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:02:30 12/09/2025</td>
-                                    <td>Bùi Ngọc Hiếu</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
+                        <div class="card results-table">
+                            <div style="display: flex; justify-content:space-between;">
+                                <h3><i class="fas fa-list-ul"></i>  Chọn mẫu không bạo lực</h3>
+                                <div>
 
-                                <tr>
-                                    <td>vio4.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:04:20 12/09/2025</td>
-                                    <td>Bùi Ngọc Hiếu</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
+                                    <button class="btn" onclick="toggleCheckboxes('nonViolenceTable', true)">Chọn tất cả</button>
+                                    <button class="btn" onclick="toggleCheckboxes('nonViolenceTable', false)">Bỏ chọn tất cả</button>
+                                </div>
+                            </div>
+                            <table id="nonViolenceTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên file</th>
+                                        <th>Thời lượng</th>
+                                        <th>Ngày upload</th>
+                                        <th>Người upload</th>
+                                        <th>Chọn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%
+                                        for (VideoSample vs : nonViolenceSampleList) {
+                                            RawSample rawSample = vs.getRawSample();
+                                            Admin admin = rawSample.getUploadBy();
+                                    %>
+                                    <tr>
+                                        <td><%= vs.getId()%></td>
+                                        <td><%= vs.getFileName()%></td>
+                                        <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
+                                        <td><%= admin.getFullName()%></td>
+                                        <td>
+                                            <input type="checkbox" name="violenceSamples" value="<%= vs.getId()%>">
+                                        </td>
+                                    </tr>
+                                    <%
+                                        }
+                                    %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div class="card results-table">
-                        <div style="display: flex; justify-content:space-between;">
-                            <h3><i class="fas fa-list-ul"></i>  Chọn mẫu không bạo lực</h3>
+                    <h3 style="color: var(--primary-color); font-size: 25px">2. Xác nhận và train mô hình</h3>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between;">
                             <div>
-                                <button class="btn">Chọn tất cả</button>
-                                <button class="btn">Bỏ chọn tất cả</button>
+                                <div style="display: flex; justify-content: space-between; width: 300px; margin-bottom: 20px">
+                                    <label><strong>tên mô hình: </strong></label>
+                                    <input>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; width: 300px">
+                                    <label><strong>Ghi chú: </strong></label>
+                                    <input>
+                                </div>
                             </div>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tên file</th>
-                                    <th>Thời lượng</th>
-                                    <th>Ngày upload</th>
-                                    <th>Người upload</th>
-                                    <th>Chọn</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>vio1.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:00:23 12/09/2025</td>
-                                    <td>Trịnh Hoàng Hiệp</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>vio1.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:02:30 12/09/2025</td>
-                                    <td>Nguyễn Thị Hiền</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>vio1.mp4</td>
-                                    <td>00:00:05</td>
-                                    <td>11:04:20 12/09/2025</td>
-                                    <td>Nguyễn Thị Hiền</td>
-                                    <td>
-                                        <input type="checkbox"> 
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <h3 style="color: var(--primary-color); font-size: 25px">2. Xác nhận và train mô hình</h3>
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>
-                            <div style="display: flex; justify-content: space-between; width: 300px; margin-bottom: 20px">
-                                <label><strong>tên mô hình: </strong></label>
-                                <input>
+                            <div>
+                                <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
+                                <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; width: 300px">
-                                <label><strong>Ghi chú: </strong></label>
-                                <input>
-                            </div>
-                        </div>
-                        <div>
-                            <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
-                            <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
-                        </div>
-                        <div>
-                            <form action="TrainProgressServlet" method="get">
-                                <button type="submit" class="btn" style="background-color: #ff6565">
-                                    Hủy bỏ
+                            <div style="display: flex; gap:20px; align-items:  center">
+                                <button class="btn" style=" background-color: #ff6565">
+                                    <a href="ManageModelsServlet" style="text-decoration:none; color:inherit;">
+                                        Hủy bỏ
+                                    </a>
                                 </button>
                                 <button type="submit" class="btn" style="background-color: #28a745">
                                     Huấn luyện model 
                                 </button>
-                            </form>
+
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </main>
         </div>
+        <script>
+            function toggleCheckboxes(tableId, checked) {
+                const table = document.getElementById(tableId);
+                const checkboxes = table.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = checked);
+            }
+        </script>
+
     </body>
 
 </html>
