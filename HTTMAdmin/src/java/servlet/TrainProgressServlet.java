@@ -20,8 +20,19 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "TrainProgressServlet", urlPatterns = {"/TrainProgressServlet"})
 public class TrainProgressServlet extends HttpServlet {
 
-     @Override
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String modelName = req.getParameter("modelName");
+        String modelNote = req.getParameter("modelNote");
+        String[] violenceSampleIds = req.getParameterValues("violenceSampleIds");
+        String[] nonViolenceSampleIds = req.getParameterValues("nonViolenceSampleIds");
+
+        System.out.println(modelName + " " + modelNote);
+        System.out.println(violenceSampleIds.length + " " + nonViolenceSampleIds.length);
+        if (modelNote.isEmpty()) {
+            modelNote = null;
+        }
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/TrainModel/TrainProgress.jsp");
         dispatcher.forward(req, resp);
     }

@@ -63,8 +63,8 @@
                             <div style="display: flex; justify-content:space-between;">
                                 <h3><i class="fas fa-list-ul"></i>  Chọn mẫu bạo lực</h3>
                                 <div>
-                                    <button class="btn" onclick="toggleCheckboxes('violenceTable', true)">Chọn tất cả</button>
-                                    <button class="btn" onclick="toggleCheckboxes('violenceTable', false)">Bỏ chọn tất cả</button>
+                                    <button type="button" class="btn" onclick="toggleCheckboxes('violenceTable', true)">Chọn tất cả</button>
+                                    <button type="button" class="btn" onclick="toggleCheckboxes('violenceTable', false)">Bỏ chọn tất cả</button>
                                 </div>
                             </div>
                             <table id="violenceTable">
@@ -89,7 +89,7 @@
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
                                         <td><%= admin.getFullName()%></td>
                                         <td>
-                                            <input type="checkbox" name="violenceSamples" value="<%= vs.getId()%>">
+                                            <input type="checkbox" name="violenceSampleIds" value="<%= vs.getId()%>">
                                         </td>
                                     </tr>
                                     <%
@@ -104,8 +104,8 @@
                                 <h3><i class="fas fa-list-ul"></i>  Chọn mẫu không bạo lực</h3>
                                 <div>
 
-                                    <button class="btn" onclick="toggleCheckboxes('nonViolenceTable', true)">Chọn tất cả</button>
-                                    <button class="btn" onclick="toggleCheckboxes('nonViolenceTable', false)">Bỏ chọn tất cả</button>
+                                    <button type="button" class="btn" onclick="toggleCheckboxes('nonViolenceTable', true)">Chọn tất cả</button>
+                                    <button type="button" class="btn" onclick="toggleCheckboxes('nonViolenceTable', false)">Bỏ chọn tất cả</button>
                                 </div>
                             </div>
                             <table id="nonViolenceTable">
@@ -130,7 +130,7 @@
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
                                         <td><%= admin.getFullName()%></td>
                                         <td>
-                                            <input type="checkbox" name="violenceSamples" value="<%= vs.getId()%>">
+                                            <input type="checkbox" name="nonViolenceSampleIds" value="<%= vs.getId()%>">
                                         </td>
                                     </tr>
                                     <%
@@ -147,17 +147,18 @@
                             <div>
                                 <div style="display: flex; justify-content: space-between; width: 300px; margin-bottom: 20px">
                                     <label><strong>tên mô hình: </strong></label>
-                                    <input>
+                                    <input type="text" name="modelName" required>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; width: 300px">
                                     <label><strong>Ghi chú: </strong></label>
-                                    <input>
+                                    <input type="text" name="modelNote">
                                 </div>
                             </div>
-                            <div>
+<!--                            <div>
                                 <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
                                 <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
                             </div>
+                            -->
                             <div style="display: flex; gap:20px; align-items:  center">
                                 <button class="btn" style=" background-color: #ff6565">
                                     <a href="ManageModelsServlet" style="text-decoration:none; color:inherit;">
