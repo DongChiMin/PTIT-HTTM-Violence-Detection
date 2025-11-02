@@ -57,7 +57,7 @@ body {
 }
 
 .user-profile a {
-    color: var(--secondary-color);
+    color: #ff6565;
     text-decoration: none;
     font-weight: 500;
     margin-left: 10px;
@@ -66,17 +66,19 @@ body {
 /* --- Main Layout --- */
 .main-layout {
     display: flex;
+    min-height: calc(100vh - 60px);
 }
 
 /* --- Sidebar with Icons --- */
 .sidebar {
     width: 240px;
     background-color: var(--sidebar-bg);
-    height: 100vh;
     /* Full height minus header */
     padding-top: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
     border-right: 1px solid var(--border-color);
+    top: 0;
+    left: 0;
 }
 
 .sidebar nav ul {
@@ -220,7 +222,7 @@ th {
 
 .btn-edit:hover {
     background-color: #ffcf56;
-    color: white;
+    color: black;
 }
 
 .btn-add {

@@ -162,7 +162,7 @@
                                                         </div>
                             -->
                             <div style="display: flex; gap:20px; align-items:  center">
-                                <button class="btn" style=" background-color: #ff6565">
+                                <button type="button" class="btn" style=" background-color: #ff6565">
                                     <a href="ManageModelsServlet" style="text-decoration:none; color:inherit;">
                                         Hủy bỏ
                                     </a>

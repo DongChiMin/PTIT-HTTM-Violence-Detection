@@ -136,7 +136,7 @@
                                 <td>
                                     <%= model.getNote()%>
                                 </td>
-                                <td><%= trainedBy.getFullName()%></td>
+                                <td style="width: 120px"><%= trainedBy.getFullName()%></td>
                                 <td class="action-buttons" style="width: 260px;">
                                     <%
                                         if (!model.getIsActive()) {
