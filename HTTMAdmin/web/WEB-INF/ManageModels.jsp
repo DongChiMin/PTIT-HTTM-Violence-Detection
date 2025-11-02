@@ -149,11 +149,11 @@
                                             class="btn-add btn-activate">
                                             <i class="fas fa-check-circle"></i> Kích hoạt
                                         </button>
-                                        <button 
+<!--                                        <button 
                                             type="submit" name="action" value="retrain_model"
                                             class="btn-edit">
                                             <i class="fas fa-edit"></i> Retrain
-                                        </button>
+                                        </button>-->
                                         <button 
                                             type="submit" name="action" value="delete_model"
                                             onclick="return confirm('Bạn có chắc chắn muốn xóa model này không?');"

@@ -24,7 +24,7 @@
             List<VideoSample> nonViolenceSampleList = new ArrayList<>();
             Integer pathError = (Integer) request.getAttribute("pathError");
             Integer modelNameExistsError = (Integer) request.getAttribute("modelNameExistsError");
-            
+
             for (VideoSample vs : videoSampleList) {
                 if (vs.getLabel().equalsIgnoreCase("violence")) {
                     violenceSampleList.add(vs);
@@ -177,21 +177,24 @@
                 </form>
             </main>
         </div>
+                                
+                                
         <%
             if (pathError != null) {
         %>
         <script>
             alert("PLease select at least 1 sample!")
         </script>
+        
+        
+        <%
+        } else if (modelNameExistsError != null) {
+        %>
+        <script>
+            alert("Model name existed!")
+        </script>
         <%
             }
-else if(modelNameExistsError != null){
-%>
-<script>
-    alert("Model name existed!")
-</script>
-        <%
-}
         %>
         <script>
             function toggleCheckboxes(tableId, checked) {
