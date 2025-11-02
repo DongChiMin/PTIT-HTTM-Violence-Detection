@@ -20,10 +20,8 @@ import util.DBUtil;
  * @author namv2
  */
 public class AdminDAO {
-    private Connection conn;
 
     public AdminDAO() {
-        this.conn = DBUtil.getConnection();
     }
     
     public Admin getAdminById(int id){
@@ -32,7 +30,7 @@ public class AdminDAO {
                      WHERE t.id = ?
                      """;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             Admin admin = new Admin();

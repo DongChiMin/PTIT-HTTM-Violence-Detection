@@ -22,7 +22,9 @@
             List<VideoSample> videoSampleList = (List<VideoSample>) request.getAttribute("videoSampleList");
             List<VideoSample> violenceSampleList = new ArrayList<>();
             List<VideoSample> nonViolenceSampleList = new ArrayList<>();
-
+            Integer pathError = (Integer) request.getAttribute("pathError");
+            Integer modelNameExistsError = (Integer) request.getAttribute("modelNameExistsError");
+            
             for (VideoSample vs : videoSampleList) {
                 if (vs.getLabel().equalsIgnoreCase("violence")) {
                     violenceSampleList.add(vs);
@@ -36,7 +38,7 @@
                 <h1>AI System</h1>
             </div>
             <div class="user-profile">
-                <span class="admin-name">Xin chào, Bùi Ngọc Hiếu!</span>
+                <span class="admin-name">Xin chào, Nguyễn Văn A!</span>
                 <img src="https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg" alt="Avatar"
                      class="avatar">
                 <a href="/logout">Đăng xuất</a>
@@ -54,7 +56,7 @@
                 </nav>
             </aside>
             <main class="content">
-                <form action="TrainProgressServlet" method="get">
+                <form action="SelectSamplesServlet" method="post">
                     <h2 style="text-align: center">Huấn luyện model mới</h2>
                     <h3 style="color: var(--primary-color); font-size: 25px">1. Chọn mẫu</h3>
 
@@ -89,7 +91,7 @@
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
                                         <td><%= admin.getFullName()%></td>
                                         <td>
-                                            <input type="checkbox" name="violenceSampleIds" value="<%= vs.getId()%>">
+                                            <input type="checkbox" name="violenceSamplePaths" value="<%= vs.getPath()%>">
                                         </td>
                                     </tr>
                                     <%
@@ -130,7 +132,7 @@
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
                                         <td><%= admin.getFullName()%></td>
                                         <td>
-                                            <input type="checkbox" name="nonViolenceSampleIds" value="<%= vs.getId()%>">
+                                            <input type="checkbox" name="nonViolenceSamplePaths" value="<%= vs.getPath()%>">
                                         </td>
                                     </tr>
                                     <%
@@ -154,10 +156,10 @@
                                     <input type="text" name="modelNote">
                                 </div>
                             </div>
-<!--                            <div>
-                                <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
-                                <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
-                            </div>
+                            <!--                            <div>
+                                                            <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
+                                                            <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
+                                                        </div>
                             -->
                             <div style="display: flex; gap:20px; align-items:  center">
                                 <button class="btn" style=" background-color: #ff6565">
@@ -175,6 +177,22 @@
                 </form>
             </main>
         </div>
+        <%
+            if (pathError != null) {
+        %>
+        <script>
+            alert("PLease select at least 1 sample!")
+        </script>
+        <%
+            }
+else if(modelNameExistsError != null){
+%>
+<script>
+    alert("Model name existed!")
+</script>
+        <%
+}
+        %>
         <script>
             function toggleCheckboxes(tableId, checked) {
                 const table = document.getElementById(tableId);
@@ -182,7 +200,6 @@
                 checkboxes.forEach(cb => cb.checked = checked);
             }
         </script>
-
     </body>
 
 </html>

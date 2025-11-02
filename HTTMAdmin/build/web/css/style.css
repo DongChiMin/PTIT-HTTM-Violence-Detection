@@ -162,6 +162,24 @@ body {
     transition: background-color 0.2s;
 }
 
+.btn-green {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #28a745;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-green:disabled {
+    background-color: #ccc; 
+    color: #666;           
+    cursor: not-allowed;   
+}
+
 .btn:hover {
     background-color: #3a7ac8;
 }
@@ -370,4 +388,3 @@ th {
     flex-wrap: wrap;
     justify-content: flex-start;
 }
-

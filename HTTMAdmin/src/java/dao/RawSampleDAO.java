@@ -22,10 +22,8 @@ import util.DBUtil;
  * @author namv2
  */
 public class RawSampleDAO {
-    private Connection conn;
 
     public RawSampleDAO() {
-        this.conn = DBUtil.getConnection();
     }
     
     public RawSample getRawSampleById(int id){
@@ -34,7 +32,7 @@ public class RawSampleDAO {
                      WHERE t.id = ?
                      """;
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             RawSample rawSample = new RawSample();

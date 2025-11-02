@@ -22,7 +22,7 @@
             List<Model> modelList = (List<Model>) request.getAttribute("modelList");
             Model activeModel = new Model();
             String activeModelAdmin = "";
-            
+
             for (Model m : modelList) {
                 if (m.getIsActive()) {
                     activeModel = m;
@@ -31,14 +31,14 @@
                     break;
                 }
             }
-            
+
         %>
         <header class="header">
             <div class="logo">
                 <h1>AI System</h1>
             </div>
             <div class="user-profile">
-                <span class="admin-name">Xin chào, Bùi Ngọc Hiếu!</span>
+                <span class="admin-name">Xin chào, Nguyễn Văn A!</span>
                 <img src="https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg" alt="Avatar"
                      class="avatar">
                 <a href="/logout">Đăng xuất</a>
@@ -134,19 +134,16 @@
                                     <%= model.getTrainStartTime().format(formatter)%>
                                 </td>
                                 <td>
-                                    <%= model.getNote() %>
+                                    <%= model.getNote()%>
                                 </td>
                                 <td><%= trainedBy.getFullName()%></td>
                                 <td class="action-buttons">
                                     <%
-                                        if(!model.getIsActive()){
-                                        %>
-                                        <button class="btn-add btn-activate">
+                                        if (!model.getIsActive()) {
+                                    %>
+                                    <button class="btn-add btn-activate">
                                         <i class="fas fa-check-circle"></i> Kích hoạt
                                     </button>
-                                    <%
-                                        }
-                                    %>
                                     <button class="btn-edit">
                                         <i class="fas fa-edit"></i> Retrain
                                     </button>
@@ -154,6 +151,14 @@
                                             onclick="return confirm('Bạn có chắc chắn muốn xóa model này?')">
                                         <i class="fas fa-trash-alt"></i> Xóa
                                     </button>
+                                    <%
+                                    } else {
+                                    %>
+                                    Model đang kích hoạt
+                                    <%
+                                        }
+                                    %>
+
                                 </td>
                             </tr>
                             <%

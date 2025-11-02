@@ -21,16 +21,15 @@ import util.DBUtil;
  * @author namv2
  */
 public class VideoSampleDAO {
-    private Connection conn;
 
     public VideoSampleDAO() {
-        this.conn = DBUtil.getConnection();
+
     }
-    
-    public List<VideoSample> getvideoSampleList(){
+
+    public List<VideoSample> getvideoSampleList() {
         String sql = "SELECT * FROM tblVideoSample";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             List<VideoSample> videoSampleList = new ArrayList<>();
@@ -53,6 +52,37 @@ public class VideoSampleDAO {
             return videoSampleList;
         } catch (SQLException ex) {
             Logger.getLogger(ModelDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public VideoSample getVideoSampleById(int id) {
+        String sql = """
+                     SELECT * FROM tblVideoSample t
+                     WHERE t.id = ?
+                     """;
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            VideoSample videoSample = new VideoSample();
+
+            while (rs.next()) {
+                videoSample.setId(rs.getInt("id"));
+                videoSample.setFileName(rs.getString("fileName"));
+                videoSample.setPath(rs.getString("path"));
+                videoSample.setStartSecond(rs.getInt("startSecond"));
+                videoSample.setEndSecond(rs.getInt("endSecond"));
+                videoSample.setLabel(rs.getString("label"));
+
+                int tblRawSampleid = rs.getInt("tblRawSampleid");
+                RawSampleDAO rawSampleDAO = new RawSampleDAO();
+                videoSample.setRawSample(rawSampleDAO.getRawSampleById(tblRawSampleid));
+            }
+
+            return videoSample;
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }

@@ -15,7 +15,7 @@
                 <h1>AI System</h1>
             </div>
             <div class="user-profile">
-                <span class="admin-name">Xin chào, Bùi Ngọc Hiếu!</span>
+                <span class="admin-name">Xin chào, Nguyễn Văn A!</span>
                 <img src="https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg" alt="Avatar"
                      class="avatar">
                 <a href="/logout">Đăng xuất</a>
