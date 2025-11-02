@@ -160,9 +160,8 @@
                                 }
 
                                 document.getElementById("trainDuration").value = trainDuration;
-                                document.getElementById("trainEndTime").value = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                                document.getElementById("trainEndTime").value = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).replace('T',' ');
                                 document.getElementById("testSamples").value = totalSupport;
-                                console.log(totalSupport + " " + new Date().toISOString().slice(0, 19));
                                 viewResultButton.disabled = false;  // bật nút
                             } else {
                                 trainDuration += 2;

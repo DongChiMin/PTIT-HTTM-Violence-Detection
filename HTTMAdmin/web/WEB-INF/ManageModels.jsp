@@ -83,7 +83,7 @@
                                         long minutes = duration.toMinutesPart();
                                         long seconds = duration.toSecondsPart();
                                     %>
-                                    <%= String.format("%02dh%02dm%02ds", hours, minutes, seconds)%>
+                                    <%= String.format("%02d:%02d:%02d", hours, minutes, seconds)%>
                                 </p>
                                 <p><strong>Số lượng mẫu test:</strong> <%= activeModel.getTestSamples()%></p>
                             </div>
@@ -137,24 +137,34 @@
                                     <%= model.getNote()%>
                                 </td>
                                 <td><%= trainedBy.getFullName()%></td>
-                                <td class="action-buttons">
+                                <td class="action-buttons" style="width: 260px;">
                                     <%
                                         if (!model.getIsActive()) {
                                     %>
-                                    <button class="btn-add btn-activate">
-                                        <i class="fas fa-check-circle"></i> Kích hoạt
-                                    </button>
-                                    <button class="btn-edit">
-                                        <i class="fas fa-edit"></i> Retrain
-                                    </button>
-                                    <button class="btn-delete"
-                                            onclick="return confirm('Bạn có chắc chắn muốn xóa model này?')">
-                                        <i class="fas fa-trash-alt"></i> Xóa
-                                    </button>
+                                    <form action="ManageModelsServlet" method="post">
+                                        <input hidden name="modelId" value="<%=model.getId()%>">
+                                        <button
+                                            type="submit" name="action" value="activate_model"
+                                            onclick="return confirm('Bạn có chắc chắn muốn kích hoạt model này không?');"
+                                            class="btn-add btn-activate">
+                                            <i class="fas fa-check-circle"></i> Kích hoạt
+                                        </button>
+                                        <button 
+                                            type="submit" name="action" value="retrain_model"
+                                            class="btn-edit">
+                                            <i class="fas fa-edit"></i> Retrain
+                                        </button>
+                                        <button 
+                                            type="submit" name="action" value="delete_model"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa model này không?');"
+                                            class="btn-delete">
+                                            <i class="fas fa-trash-alt"></i> Xóa
+                                        </button>
+                                    </form>
                                     <%
                                     } else {
                                     %>
-                                    Model đang kích hoạt
+                                    <p style="font-weight: bold; color: #28a745">Model đang kích hoạt</p>
                                     <%
                                         }
                                     %>

@@ -105,7 +105,7 @@ public class ModelDAO {
             } else {
                 ps.setNull(9, java.sql.Types.VARCHAR);
             }
-            
+
             //path chỉ lưu từ data/model/...
             String pathStr = newModel.getPath();
             int index = pathStr.indexOf("data");
@@ -123,5 +123,83 @@ public class ModelDAO {
         }
 
         return -1;
+    }
+
+    public Model getModelById(int id) {
+        String sql = """
+                     SELECT * FROM tblModel t
+                     WHERE t.id = ?
+                     """;
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            Model model = new Model();
+
+            while (rs.next()) {
+                model.setId(rs.getInt("id"));
+                model.setName(rs.getString("name"));
+                model.setPath(rs.getString("path"));
+                model.setAccuracy(rs.getFloat("accuracy"));
+                model.setRecallViolence(rs.getFloat("recallViolence"));
+                model.setTrainStartTime(rs.getTimestamp("trainStartTime").toLocalDateTime());
+                model.setTrainEndTime(rs.getTimestamp("trainEndTime").toLocalDateTime());
+                model.setTrainSamples(rs.getInt("trainSamples"));
+                model.setTestSamples(rs.getInt("testSamples"));
+                model.setNote(rs.getString("note"));
+                model.setIsActive(rs.getBoolean("isActive"));
+
+                int tblAdminid = rs.getInt("tblAdminid");
+                AdminDAO adminDao = new AdminDAO();
+                model.setTrainedBy(adminDao.getAdminById(tblAdminid));
+            }
+
+            return model;
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public boolean deleteModelById(int id) {
+        String sql = "DELETE FROM tblModel WHERE id = ?";
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean SetActiveById(int id) {
+        String sqlReset = "UPDATE tblModel SET isActive = 0 WHERE isActive = 1";
+        String sqlActivate = "UPDATE tblModel SET isActive = 1 WHERE id = ?";
+
+        try (Connection conn = DBUtil.getConnection()) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            try (PreparedStatement psReset = conn.prepareStatement(sqlReset); PreparedStatement psActivate = conn.prepareStatement(sqlActivate)) {
+
+                psReset.executeUpdate(); // Reset tất cả model active
+                psActivate.setInt(1, id);
+                int affectedRows = psActivate.executeUpdate(); // Kích hoạt model được chọn
+
+                conn.commit(); // Commit transaction
+                return affectedRows > 0;
+
+            } catch (SQLException e) {
+                conn.rollback(); // Rollback nếu có lỗi
+                e.printStackTrace();
+                return false;
+            } finally {
+                conn.setAutoCommit(true); // Trả về chế độ auto-commit
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

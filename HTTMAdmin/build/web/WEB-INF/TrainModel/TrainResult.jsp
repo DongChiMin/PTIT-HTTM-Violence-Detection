@@ -138,7 +138,7 @@
                         <button type="submit" name="action" value="delete_model" class="btn" style="background-color: #ff6565"
                                 onclick="return confirm('Bạn có chắc chắn muốn hủy bỏ model này không?');">Hủy bỏ model</button>
                         <button type="submit" name="action" value="save" class="btn"
-                                onclick="return confirm('Lưu model vào cơ sở dữ liệu?');">Lưu mô hình</button>
+                                onclick="return confirm('Lưu model vào cơ sở dữ liệu?');">Lưu model</button>
                     </div>
                 </form>
 
