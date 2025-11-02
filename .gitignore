@@ -10,3 +10,5 @@ HTTMAdmin/data/test_samples/violence/
 
 HTTMAdmin/data/train_samples/non_violence/
 HTTMAdmin/data/train_samples/violence/
+
+HTTMAdmin\logs
