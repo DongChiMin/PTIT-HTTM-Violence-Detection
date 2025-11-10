@@ -19,7 +19,7 @@ public class ModelMetricDAO {
     public ModelMetricDAO() {
     }
 
-    public int insertModelMetric(Connection conn, ModelMetric metric) {
+    public void insertModelMetric(Connection conn, ModelMetric violenceMetric, ModelMetric nonViolenceMetric) {
         String sql = """
         INSERT INTO tblModelMetric (labelName, precisionScore, recall, f1score, support, tblModelid)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -27,26 +27,27 @@ public class ModelMetricDAO {
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, metric.getLabelName());
-            ps.setFloat(2, metric.getPrecisionScore());
-            ps.setFloat(3, metric.getRecall());
-            ps.setFloat(4, metric.getF1score());
-            ps.setInt(5, metric.getSupport());
-            ps.setInt(6, metric.getModel().getId());
+            ps.setString(1, violenceMetric.getLabelName());
+            ps.setFloat(2, violenceMetric.getPrecisionScore());
+            ps.setFloat(3, violenceMetric.getRecall());
+            ps.setFloat(4, violenceMetric.getF1score());
+            ps.setInt(5, violenceMetric.getSupport());
+            ps.setInt(6, violenceMetric.getModel().getId());
 
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1); // Trả về id của ModelMetric vừa được thêm
-                }
-            }
+            ps.executeUpdate();
+            
+            ps.setString(1, nonViolenceMetric.getLabelName());
+            ps.setFloat(2, nonViolenceMetric.getPrecisionScore());
+            ps.setFloat(3, nonViolenceMetric.getRecall());
+            ps.setFloat(4, nonViolenceMetric.getF1score());
+            ps.setInt(5, nonViolenceMetric.getSupport());
+            ps.setInt(6, nonViolenceMetric.getModel().getId());
+
+            ps.executeUpdate();
 
         } catch (SQLException ex) {
             Logger.getLogger(ModelMetricDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return -1;
     }
 
     public boolean deleteModelMetricByModelId(int modelId){

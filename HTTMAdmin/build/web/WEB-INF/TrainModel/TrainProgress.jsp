@@ -57,9 +57,12 @@
                             </div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between">
+                        <div style="display: flex; justify-content: space-between; margin-top: 40px;">
                             <form action="SelectSamplesServlet" method="get">
-                                <button type="submit" class="btn" style="background-color: #ff6565">
+                                <input hidden name="modelName" value="<%=modelName%>">
+                                <button type="submit" class="btn" name="action" value="cancelTraining"
+                                        style="background-color: #ff6565"
+                                        onclick="return confirm('Bạn có chắc chắn muốn hủy quá trình train này không?');">
                                     Hủy bỏ
                                 </button>
                             </form>

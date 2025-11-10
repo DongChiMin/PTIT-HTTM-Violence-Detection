@@ -23,6 +23,7 @@ import model.Admin;
 import model.Model;
 import model.ModelMetric;
 import util.DBUtil;
+import util.PathUtil;
 
 /**
  *
@@ -124,7 +125,7 @@ public class TrainResultServlet extends HttpServlet {
         String testSamples = req.getParameter("testSamples");
         //String trainDuration = req.getParameter("trainDuration");
         String fileName = modelName.toLowerCase().replaceAll("[^a-z0-9]+", "_").replaceAll("^_+|_+$", "");
-        String modelPath = "D:/School/MonHoc/PTC HTTM/PTIT-HTTM-Violence-Detection/HTTMAdmin/data/model/" + fileName + ".pth";
+        String modelPath = PathUtil.getProjectPath() + "/data/model/" + fileName + ".pth";
 
         //kết quả training Non_Violence ---
         String accuracyNon = req.getParameter("accuracyNon");
@@ -193,7 +194,6 @@ public class TrainResultServlet extends HttpServlet {
                     nonViolenceMetric.setF1score(Float.parseFloat(f1Non));
                     nonViolenceMetric.setSupport(Integer.parseInt(supportNon));
                     nonViolenceMetric.setModel(model);
-                    modelMetricDao.insertModelMetric(conn, nonViolenceMetric);
 
                     //3. MODEL METRIC VIOLENCE
                     ModelMetric violenceMetric = new ModelMetric();
@@ -204,7 +204,7 @@ public class TrainResultServlet extends HttpServlet {
                     violenceMetric.setSupport(Integer.parseInt(supportViolence));
                     violenceMetric.setModel(model);
 
-                    modelMetricDao.insertModelMetric(conn, violenceMetric);
+                    modelMetricDao.insertModelMetric(conn, violenceMetric, nonViolenceMetric);
 
                     conn.commit(); // commit nếu thành công
                 } catch (Exception e) {

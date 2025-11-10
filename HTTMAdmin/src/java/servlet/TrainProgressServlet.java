@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.VideoSample;
+import util.PathUtil;
 
 /**
  *
@@ -37,7 +38,7 @@ public class TrainProgressServlet extends HttpServlet {
         resp.setContentType("text/html;charset=UTF-8");        
         
         String jobId = (String) req.getSession().getAttribute("trainJobId");
-        File logFile = new File("D:/School/MonHoc/PTC HTTM/PTIT-HTTM-Violence-Detection/HTTMAdmin/logs/train_" + jobId + ".log");
+        File logFile = new File(PathUtil.getProjectPath() +   "/logs/train_" + jobId + ".log");
 
         resp.setContentType("text/plain; charset=UTF-8");
         if (logFile.exists()) {

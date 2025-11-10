@@ -58,10 +58,9 @@
             <main class="content">
                 <form action="SelectSamplesServlet" method="post">
                     <h2 style="text-align: center">Huấn luyện model mới</h2>
-                    <h3 style="color: var(--primary-color); font-size: 25px">1. Chọn mẫu</h3>
 
-                    <div style="display: flex; justify-content: center; gap: 30px;">
-                        <div class="card results-table">
+                    <div style="display: flex; justify-content: center; align-items: flex-start; gap: 30px;">
+                        <div class="card results-table" style="width: 35vw">
                             <div style="display: flex; justify-content:space-between;">
                                 <h3><i class="fas fa-list-ul"></i>  Chọn mẫu bạo lực</h3>
                                 <div>
@@ -69,14 +68,14 @@
                                     <button type="button" class="btn" onclick="toggleCheckboxes('violenceTable', false)">Bỏ chọn tất cả</button>
                                 </div>
                             </div>
-                            <table id="violenceTable">
+                            <table id="violenceTable" style="width: 100%; table-layout: fixed; min-height: 50vh;">
                                 <thead>
                                     <tr>
-                                        <th><strong> id</strong></th>
-                                        <th><strong> Tên file</strong></th>
-                                        <th>Video gốc</th>
-                                        <th>Người upload</th>
-                                        <th>Chọn</th>
+                                        <th style="text-align: center; width: 10%;">ID</th>
+                                        <th style="text-align: center; width: 25%;">Tên file</th>
+                                        <th style="text-align: center; width: 30%;">Video gốc</th>
+                                        <th style="text-align: center; width: 25%;">Người upload</th>
+                                        <th style="text-align: center; width: 10%;">Chọn</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,11 +85,11 @@
                                             Admin admin = rawSample.getUploadBy();
                                     %>
                                     <tr>
-                                        <td><%= vs.getId()%></td>
+                                        <td style="text-align: center;"><%= vs.getId()%></td>
                                         <td><%= vs.getFileName()%></td>
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
-                                        <td><%= admin.getFullName()%></td>
-                                        <td>
+                                        <td style="text-align: center;"><%= admin.getFullName()%></td>
+                                        <td style="text-align: center;">
                                             <input type="checkbox" name="violenceSamplePaths" value="<%= vs.getPath()%>">
                                         </td>
                                     </tr>
@@ -99,25 +98,26 @@
                                     %>
                                 </tbody>
                             </table>
+
+                            <div id="pagination1" class="pagination"></div>
                         </div>
 
-                        <div class="card results-table">
+                        <div class="card results-table" style="width: 35vw">
                             <div style="display: flex; justify-content:space-between;">
                                 <h3><i class="fas fa-list-ul"></i>  Chọn mẫu không bạo lực</h3>
                                 <div>
-
                                     <button type="button" class="btn" onclick="toggleCheckboxes('nonViolenceTable', true)">Chọn tất cả</button>
                                     <button type="button" class="btn" onclick="toggleCheckboxes('nonViolenceTable', false)">Bỏ chọn tất cả</button>
                                 </div>
                             </div>
-                            <table id="nonViolenceTable">
+                            <table id="nonViolenceTable" style="width: 100%; table-layout: fixed; min-height: 50vh;">
                                 <thead>
                                     <tr>
-                                        <th>Tên file</th>
-                                        <th>Thời lượng</th>
-                                        <th>Ngày upload</th>
-                                        <th>Người upload</th>
-                                        <th>Chọn</th>
+                                        <th style="text-align: center; width: 10%;">ID</th>
+                                        <th style="text-align: center; width: 25%;">Tên file</th>
+                                        <th style="text-align: center; width: 30%;">Video gốc</th>
+                                        <th style="text-align: center; width: 25%;">Người upload</th>
+                                        <th style="text-align: center; width: 10%;">Chọn</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -127,11 +127,11 @@
                                             Admin admin = rawSample.getUploadBy();
                                     %>
                                     <tr>
-                                        <td><%= vs.getId()%></td>
+                                        <td style="text-align: center;"><%= vs.getId()%></td>
                                         <td><%= vs.getFileName()%></td>
                                         <td>(<%= vs.getStartSecond()%>s - <%= vs.getEndSecond()%>s) <%= rawSample.getFileName()%></td>
-                                        <td><%= admin.getFullName()%></td>
-                                        <td>
+                                        <td style="text-align: center;"><%= admin.getFullName()%></td>
+                                        <td style="text-align: center;">
                                             <input type="checkbox" name="nonViolenceSamplePaths" value="<%= vs.getPath()%>">
                                         </td>
                                     </tr>
@@ -140,22 +140,24 @@
                                     %>
                                 </tbody>
                             </table>
+
+                            <div id="pagination2" class="pagination"></div>
                         </div>
                     </div>
 
-                    <h3 style="color: var(--primary-color); font-size: 25px">2. Xác nhận và train mô hình</h3>
                     <div class="card">
                         <div style="display: flex; justify-content: space-between;">
                             <div>
-                                <div style="display: flex; justify-content: space-between; width: 300px; margin-bottom: 20px">
-                                    <label><strong>tên mô hình: </strong></label>
+                                <div style="display: flex; justify-content: space-between; width: 320px; margin-bottom: 20px; align-items: center;">
+                                    <label><strong>Tên mô hình<span style="color: red;">*</span></strong></label>
                                     <input type="text" name="modelName" required>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; width: 300px">
-                                    <label><strong>Ghi chú: </strong></label>
+                                 <div style="display: flex; justify-content: space-between; width: 320px; align-items: center;">
+                                    <label><strong>Ghi chú </strong></label>
                                     <input type="text" name="modelNote">
                                 </div>
                             </div>
+                                                           
                             <!--                            <div>
                                                             <div style="margin-bottom: 20px"><strong>Số mẫu bạo lực đã chọn:</strong> 0</div>
                                                             <div><strong>Số mẫu không bạo lực đã chọn:</strong> 0</div>
@@ -177,16 +179,16 @@
                 </form>
             </main>
         </div>
-                                
-                                
+
+
         <%
             if (pathError != null) {
         %>
         <script>
             alert("PLease select at least 1 sample!")
         </script>
-        
-        
+
+
         <%
         } else if (modelNameExistsError != null) {
         %>
@@ -196,6 +198,7 @@
         <%
             }
         %>
+
         <script>
             function toggleCheckboxes(tableId, checked) {
                 const table = document.getElementById(tableId);
@@ -203,6 +206,62 @@
                 checkboxes.forEach(cb => cb.checked = checked);
             }
         </script>
+
+        <!--Phân trang-->
+        <script>
+            function setupPagination(tableId, paginationId, rowsPerPage) {
+                const table = document.getElementById(tableId);
+                const tbody = table.querySelector("tbody");
+                const rows = Array.from(tbody.querySelectorAll("tr"));
+                const pagination = document.getElementById(paginationId);
+
+                let currentPage = 1;
+                const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+                function showPage(page) {
+                    currentPage = page;
+                    const start = (page - 1) * rowsPerPage;
+                    const end = start + rowsPerPage;
+
+                    rows.forEach((row, index) => {
+                        row.style.display = (index >= start && index < end) ? "" : "none";
+                    });
+
+                    renderPagination();
+                }
+
+                function renderPagination() {
+                    pagination.innerHTML = "";
+
+                    const prev = document.createElement("button");
+                    prev.textContent = "Prev";
+                    prev.disabled = currentPage === 1;
+                    prev.onclick = () => showPage(currentPage - 1);
+                    pagination.appendChild(prev);
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        const btn = document.createElement("button");
+                        btn.textContent = i;
+                        if (i === currentPage) btn.classList.add("active");
+                        btn.disabled = i === currentPage;
+                        btn.onclick = () => showPage(i);
+                        pagination.appendChild(btn);
+                    }
+
+                    const next = document.createElement("button");
+                    next.textContent = "Next";
+                    next.disabled = currentPage === totalPages;
+                    next.onclick = () => showPage(currentPage + 1);
+                    pagination.appendChild(next);
+                }
+
+                showPage(1);
+            }
+
+            setupPagination("violenceTable", "pagination1", 5);
+            setupPagination("nonViolenceTable", "pagination2", 5);
+        </script>
+
     </body>
 
 </html>

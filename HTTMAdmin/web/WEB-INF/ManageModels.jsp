@@ -110,13 +110,13 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tên model</th>
-                                <th>Recall (Violence)</th>
-                                <th>Ngày tạo</th>
-                                <th>Note</th>
-                                <th>Người tạo</th>
-                                <th>Hành động</th>
+                                <th style="text-align: center; width: 5%;">ID</th>
+                                <th style="text-align: center; width: 15%;">Tên model</th>
+                                <th style="text-align: center; width: 5%;">Recall (Violence)</th>
+                                <th style="text-align: center; width: 10%;">Ngày tạo</th>
+                                <th style="text-align: center; width: 30%;">Note</th>
+                                <th style="text-align: center; width: 15%;">Người tạo</th>
+                                <th style="text-align: center; width: 20%;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -127,21 +127,21 @@
                                         Admin trainedBy = model.getTrainedBy();
                             %>
                             <tr>
-                                <td><%= model.getId()%></td>
+                                <td style="text-align: center;"><%= model.getId()%></td>
                                 <td><%= model.getName()%></td>
-                                <td><%= String.format("%.2f", model.getRecallViolence())%></td>
-                                <td>
+                                <td style="text-align: center;"><%= String.format("%.2f", model.getRecallViolence())%></td>
+                                <td style="text-align: center;">
                                     <%= model.getTrainStartTime().format(formatter)%>
                                 </td>
                                 <td>
                                     <%= model.getNote()%>
                                 </td>
-                                <td style="width: 120px"><%= trainedBy.getFullName()%></td>
-                                <td class="action-buttons" style="width: 260px;">
+                                <td style="text-align: center;"><%= trainedBy.getFullName()%></td>
+                                <td style="text-align: center;">
                                     <%
                                         if (!model.getIsActive()) {
                                     %>
-                                    <form action="ManageModelsServlet" method="post">
+                                    <form action="ManageModelsServlet" method="post" style="display: flex; justify-content: center; gap:10px;">
                                         <input hidden name="modelId" value="<%=model.getId()%>">
                                         <button
                                             type="submit" name="action" value="activate_model"
@@ -164,7 +164,7 @@
                                     <%
                                     } else {
                                     %>
-                                    <p style="font-weight: bold; color: #28a745">Model đang kích hoạt</p>
+                                    <p style="font-weight: bold; color: #28a745; text-align: center;">Model đang kích hoạt</p>
                                     <%
                                         }
                                     %>

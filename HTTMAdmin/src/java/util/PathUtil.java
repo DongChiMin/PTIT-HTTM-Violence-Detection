@@ -14,4 +14,14 @@ public class PathUtil {
     public static String getProjectPath(){
         return projectPath;
     }
+    
+    public static String getModelFileName(String modelName){
+        String normalized = modelName.toLowerCase();
+        // Thay mọi ký tự không phải a-z, 0-9 bằng "_"
+        normalized = normalized.replaceAll("[^a-z0-9]+", "_");
+        // Bỏ "_" dư ở đầu và cuối
+        normalized = normalized.replaceAll("^_+|_+$", "");
+
+        return normalized + ".pth";
+    }
 }

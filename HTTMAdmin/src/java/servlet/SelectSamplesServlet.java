@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.VideoSample;
+import util.PathUtil;
 
 /**
  *
@@ -25,21 +26,38 @@ import model.VideoSample;
  */
 @WebServlet(name = "SelectSamplesServlet", urlPatterns = {"/SelectSamplesServlet"})
 public class SelectSamplesServlet extends HttpServlet {
+
     private static Process trainProcess;
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html;charset=UTF-8");
-        
+
         //Nếu đang có process python đang chạy thì dừng
-        if(trainProcess != null && trainProcess.isAlive()){
+        if (trainProcess != null && trainProcess.isAlive()) {
             trainProcess.destroy();
             System.out.println("Python process stopped!");
         } else {
             System.out.println("No running process to stop.");
         }
-        
+
+        //Nếu từ trang training chuyển về --> Kiểm tra file model temp đã tạo chưa để xóa đi
+        String action = req.getParameter("action");
+        if (action != null && action.equalsIgnoreCase("cancelTraining")) {
+            String modelName = req.getParameter("modelName");
+            String modelPath = PathUtil.getProjectPath() + "/data/model/" + PathUtil.getModelFileName(modelName);
+
+            //Xóa file
+            File file = new File(modelPath);
+            if (file.exists()) {
+                file.delete();
+            } else {
+                System.out.println(modelPath);
+                System.out.println("file không tồn tại");
+            }
+        }
+
         //Lấy các thông tin cần thiết cho trang
         VideoSampleDAO videoSampleDAO = new VideoSampleDAO();
         List<VideoSample> videoSampleList = videoSampleDAO.getvideoSampleList();
@@ -53,7 +71,7 @@ public class SelectSamplesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html;charset=UTF-8");
-        
+
         //Lấy dữ liệu từ trang chọn mẫu
         String modelName = req.getParameter("modelName").toLowerCase();
         String modelNote = req.getParameter("modelNote");
@@ -62,27 +80,26 @@ public class SelectSamplesServlet extends HttpServlet {
         if (modelNote.isEmpty()) {
             modelNote = null;
         }
-        
+
         //Kiểm tra lỗi chưa chọn mẫu nào
-        if(violenceSamplePaths == null && nonViolenceSamplePaths == null){
+        if (violenceSamplePaths == null && nonViolenceSamplePaths == null) {
             req.setAttribute("pathError", 1);
             doGet(req, resp);
             return;
         }
-        
+
         //Kiểm tra lỗi tên model đã tồn tại
         ModelDAO modelDao = new ModelDAO();
-        if(modelDao.isNameExists(modelName)){
+        if (modelDao.isNameExists(modelName)) {
             req.setAttribute("modelNameExistsError", 1);
             doGet(req, resp);
             return;
         }
-        
+
         //Kiểm tra danh sách path null (không chọn mẫu của 1 nhãn bất kì) thì khởi tạo mảng rỗng
-        if(violenceSamplePaths == null){
+        if (violenceSamplePaths == null) {
             violenceSamplePaths = new String[0];
-        }
-        else if(nonViolenceSamplePaths == null){
+        } else if (nonViolenceSamplePaths == null) {
             nonViolenceSamplePaths = new String[0];
         }
 
@@ -105,14 +122,14 @@ public class SelectSamplesServlet extends HttpServlet {
         new Thread(() -> {
             try {
                 ProcessBuilder pb = new ProcessBuilder("python",
-                        "D:/School/MonHoc/PTC HTTM/PTIT-HTTM-Violence-Detection/HTTMAdmin/python_scripts/train_script.py",
+                        PathUtil.getProjectPath() + "/python_scripts/train_script.py",
                         tempJson.getAbsolutePath());
                 pb.environment().put("PYTHONUTF8", "1");
                 pb.redirectErrorStream(true);
                 trainProcess = pb.start();
 
                 // Ghi log ra file
-                File logFile = new File("D:/School/MonHoc/PTC HTTM/PTIT-HTTM-Violence-Detection/HTTMAdmin/logs/train_" + jobId + ".log");
+                File logFile = new File(PathUtil.getProjectPath() + "/logs/train_" + jobId + ".log");
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(trainProcess.getInputStream())); BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
 
                     String line;
@@ -141,7 +158,6 @@ public class SelectSamplesServlet extends HttpServlet {
         req.setAttribute("trainStartTime", LocalDateTime.now().format(formatter));
         int totalTrainSamples = violenceSamplePaths == null ? 0 : violenceSamplePaths.length + (nonViolenceSamplePaths == null ? 0 : nonViolenceSamplePaths.length);
         req.setAttribute("trainSamples", totalTrainSamples);
-        
 
         //CHUYỂN TRANG
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/TrainModel/TrainProgress.jsp");
